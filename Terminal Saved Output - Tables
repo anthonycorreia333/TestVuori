@@ -1,0 +1,110 @@
+Last login: Wed Jan 18 11:54:45 on ttys000
+"/Applications/Postgres.app/Contents/Versions/9.6/bin/psql" -p5432 -d "postgres"
+Diegos-MacBook-Pro:~ diegocorrales$ "/Applications/Postgres.app/Contents/Versions/9.6/bin/psql" -p5432 -d "postgres"
+psql (9.6.1)
+Type "help" for help.
+
+postgres=# \password
+Enter new password: 
+Enter it again: 
+postgres=# 
+postgres=# 
+postgres=# 
+postgres=# create schema customers;
+CREATE SCHEMA
+postgres=# drop schema customers;
+DROP SCHEMA
+postgres=# create schema testOrders;
+CREATE SCHEMA
+postgres=# create table testOrders.customers( customerId CHAR(40), title CHAR(40), prefix CHAR(5), firstName CHAR(40), lastName CHAR(20), suffix CHAR(5), phone CHAR(15), email CHApostgres=# create table testOrders.customer( customerId CHAR(40), title CHAR(40), prefix CHAR(5), firstName CHAR(40), lastName CHAR(20), suffix CHAR(5), phone CHAR(15), email CHAR(50)); 
+CREATE TABLE
+postgres=# \c vuoritestdb
+You are now connected to database "vuoritestdb" as user "diegocorrales".
+vuoritestdb=# create table testOrders.customer( customerId CHAR(40), title CHAR(40), prefix CHAR(5), firstName CHAR(40), lastName CHAR(20), suffix CHAR(5), phone CHAR(15), email CHAR(50));
+ERROR:  schema "testorders" does not exist
+LINE 1: create table testOrders.customer( customerId CHAR(40), title...
+                     ^
+vuoritestdb=# create schema testOrders;
+CREATE SCHEMA
+vuoritestdb=# create table testOrders.customer( customerId CHAR(40), title CHAR(40), prefix CHAR(5), firstName CHAR(40), lastName CHAR(20), suffix CHAR(5), phone CHAR(15), email CHAR(50));
+CREATE TABLE
+vuoritestdb=# \c postgress
+FATAL:  database "postgress" does not exist
+Previous connection kept
+vuoritestdb=# c\ postgres
+Invalid command \. Try \? for help.
+vuoritestdb-# \c postgres
+You are now connected to database "postgres" as user "diegocorrales".
+postgres-# drop schema testOrders cascade;
+ERROR:  syntax error at or near "c"
+LINE 1: c
+        ^
+postgres=# drop schema testOrders;
+ERROR:  cannot drop schema testorders because other objects depend on it
+DETAIL:  table testorders.customer depends on schema testorders
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+postgres=# DROP SCHEMA testOrders CASCADE;
+NOTICE:  drop cascades to table testorders.customer
+DROP SCHEMA
+postgres=# \c vuoritestdb 
+You are now connected to database "vuoritestdb" as user "diegocorrales".
+vuoritestdb=# alter table testOrders.customer add primary key (customerId);
+ALTER TABLE
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, constraint customerId CHAR(40) foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "CHAR"
+LINE 1: ...derId CHAR(40) primary key, constraint customerId CHAR(40) f...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "foreign"
+LINE 1: ...orderId CHAR(40) primary key, customerId CHAR(40) foreign ke...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) constraint foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "foreign"
+LINE 1: ...R(40) primary key, customerId CHAR(40) constraint foreign ke...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) constraint customerId foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "foreign"
+LINE 1: ...ry key, customerId CHAR(40) constraint customerId foreign ke...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) add constraint customerId foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "add"
+LINE 1: ...orderId CHAR(40) primary key, customerId CHAR(40) add constr...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) customerId foreign key (customerId) references testOrders.customer delete on CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "customerId"
+LINE 1: ...orderId CHAR(40) primary key, customerId CHAR(40) customerId...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) references testOrders.customer delete on CASCADE, amount money, date timestamptz); 
+ERROR:  syntax error at or near "delete"
+LINE 1: ...ustomerId CHAR(40) references testOrders.customer delete on ...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40), amount money, date timestamptz) where constraint customerId foreign key (customerId) references testOrders.customer on delete CASCADE;
+ERROR:  syntax error at or near "where"
+LINE 1: ...tomerId CHAR(40), amount money, date timestamptz) where cons...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40), amount money, date timestamptz) and constraint customerId foreign key (customerId) references testOrders.customer on delete CASCADE;
+ERROR:  syntax error at or near "and"
+LINE 1: ...tomerId CHAR(40), amount money, date timestamptz) and constr...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) where constraint customerId foreign key (customerId) references testOrders.customer on delete CASCADE, amount money, date timestamptz);
+ERROR:  syntax error at or near "where"
+LINE 1: ...orderId CHAR(40) primary key, customerId CHAR(40) where cons...
+                                                             ^
+vuoritestdb=# vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) references testOrders.customer(customerId) on delete cascade, amount money, date timestamptz);
+ERROR:  syntax error at or near "where"
+LINE 1: ...orderId CHAR(40) primary key, customerId CHAR(40) where cons...
+                                                             ^
+vuoritestdb=# create table testOrders.order( orderId CHAR(40) primary key, customerId CHAR(40) references testOrders.customer(customerId) on delete cascade, amount money, date timestamptz);
+CREATE TABLE
+vuoritestdb=# create table testOrders.product( productId CHAR(40) primary key, name CHAR(50), color CHAR(15), price money, productAdjective CHAR(15), productMaterial CHAR(10));
+CREATE TABLE
+vuoritestdb=# create table testOrders.orderLineItem( orderId CHAR(40) references testOrders.order(orderId) on delete cascade, productId CHAR(40) references testOrders.product(productId) on delete cascade, quantity smallint;
+vuoritestdb(# );
+ERROR:  syntax error at or near ";"
+LINE 1: ...ers.product(productId) on delete cascade, quantity smallint;
+                                                                      ^
+vuoritestdb=# create table testOrders.orderLineItem( orderId CHAR(40) references testOrders.order(orderId) on delete cascade, productId CHAR(40) references testOrders.product(productId) on delete cascade, quantity smallint);
+CREATE TABLE
+vuoritestdb=# alter table testOrders.orderLineItem add primary key( orderId, productId);
+ALTER TABLE
+vuoritestdb=#
